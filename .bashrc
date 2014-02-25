@@ -7,6 +7,9 @@ _islinux=false
 _isarch=false
 [[ -f /etc/arch-release ]] && _isarch=true
 
+_isdeb=false
+[[ -f /etc/debian_version ]] && _isdeb=true
+
 _isxrunning=false
 [[ -n "$DISPLAY" ]] && _isxrunning=true
 
@@ -210,6 +213,28 @@ _isroot=false
       alias pacupg='pacman -Syu'            # Synchronize with repositories and then upgrade packages that are out of date on the local system.
       alias pacupd='pacman -Sy'             # Refresh of all package lists after updating /etc/pacman.d/mirrorlist
       alias pacin='pacman -S'               # Install specific package(s) from the repositories
+      alias pacinu='pacman -U'              # Install specific local package(s)
+      alias pacre='pacman -R'               # Remove the specified package(s), retaining its configuration(s) and required dependencies
+      alias pacun='pacman -Rcsn'            # Remove the specified package(s), its configuration(s) and unneeded dependencies
+      alias pacinfo='pacman -Si'            # Display information about a given package in the repositories
+      alias pacse='pacman -Ss'              # Search for package(s) in the repositories
+
+      alias pacupa='pacman -Sy && sudo abs' # Update and refresh the local package and ABS databases against repositories
+      alias pacind='pacman -S --asdeps'     # Install given package(s) as dependencies of another package
+      alias pacclean="pacman -Sc"           # Delete all not currently installed package files
+      alias pacmake="makepkg -fcsi"         # Make package from PKGBUILD file in current directory
+    fi
+  #}}}
+  # APT-GET ALIASES {{{
+    # we're on DEB
+    if $_isdeb; then
+      # we're not root
+      if ! $_isroot; then
+        alias apt='sudo apt-get'
+      fi
+      alias apt-update='apt update'            # Synchronize with repositories and then upgrade packages that are out of date on the local system.
+      alias pacupd='pacman -Sy'             # Refresh of all package lists after updating /etc/pacman.d/mirrorlist
+      alias apt-install='apt install'               # Install specific package(s) from the repositories
       alias pacinu='pacman -U'              # Install specific local package(s)
       alias pacre='pacman -R'               # Remove the specified package(s), retaining its configuration(s) and required dependencies
       alias pacun='pacman -Rcsn'            # Remove the specified package(s), its configuration(s) and unneeded dependencies
@@ -612,6 +637,11 @@ _isroot=false
         rm -rf /tmp/list
       }
     #}}}
+    ## Finds files by string {{{
+	textsearch () {
+		find ./ -type f -print0 | xargs -0 grep -l $1
+	}
+    #}}}
   #}}}
   # SYSTEMD SUPPORT {{{
     if which systemctl &>/dev/null; then
@@ -636,3 +666,4 @@ _isroot=false
     fi
   #}}}
 #}}}
+
